@@ -74,54 +74,77 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
+    <x-auth-header :title="__('Masuk ke Akun Anda')" :description="__('Masukkan email dan password untuk melanjutkan')" />
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+    <x-auth-session-status class="auth-success" :status="session('status')" />
 
     <form method="POST" wire:submit="login" class="flex flex-col gap-6">
         <!-- Email Address -->
-        <flux:input
-            wire:model="email"
-            :label="__('Email address')"
-            type="email"
-            required
-            autofocus
-            autocomplete="email"
-            placeholder="email@example.com"
-        />
+        <div>
+            <label class="auth-label" for="email">{{ __('Alamat Email') }}</label>
+            <input
+                wire:model="email"
+                id="email"
+                type="email"
+                required
+                autofocus
+                autocomplete="email"
+                placeholder="email@example.com"
+                class="auth-input w-full"
+            />
+            @error('email')
+                <div class="auth-error">{{ $message }}</div>
+            @enderror
+        </div>
 
         <!-- Password -->
-        <div class="relative">
-            <flux:input
+        <div>
+            <div class="flex justify-between items-center mb-2">
+                <label class="auth-label" for="password">{{ __('Password') }}</label>
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}" class="auth-link text-sm" wire:navigate>
+                        {{ __('Lupa password?') }}
+                    </a>
+                @endif
+            </div>
+            <input
                 wire:model="password"
-                :label="__('Password')"
+                id="password"
                 type="password"
                 required
                 autocomplete="current-password"
-                :placeholder="__('Password')"
-                viewable
+                placeholder="Masukkan password Anda"
+                class="auth-input w-full"
             />
-
-            @if (Route::has('password.request'))
-                <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </flux:link>
-            @endif
+            @error('password')
+                <div class="auth-error">{{ $message }}</div>
+            @enderror
         </div>
 
         <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" :label="__('Remember me')" />
+        <div class="flex items-center gap-3">
+            <input
+                wire:model="remember"
+                id="remember"
+                type="checkbox"
+                class="auth-checkbox w-4 h-4"
+            />
+            <label for="remember" class="auth-label text-sm mb-0">{{ __('Ingat saya') }}</label>
+        </div>
 
         <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+            <button type="submit" class="auth-button">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                {{ __('Masuk') }}
+            </button>
         </div>
     </form>
 
     @if (Route::has('register'))
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            <span>{{ __('Don\'t have an account?') }}</span>
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
+        <div class="text-center text-sm">
+            <span class="text-white/80">{{ __('Belum punya akun?') }}</span>
+            <a href="{{ route('register') }}" class="auth-link ml-1" wire:navigate>{{ __('Daftar sekarang') }}</a>
         </div>
     @endif
 </div>
